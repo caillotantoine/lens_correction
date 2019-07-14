@@ -4,8 +4,8 @@ using namespace cv;
 
 // Cartesian coordianate representation
 typedef struct {
-    int x;
-    int y;
+    double x;
+    double y;
 } PosCart;
 
 // Cylindrical coordinate representation

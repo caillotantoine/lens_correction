@@ -10,10 +10,10 @@ using namespace std;
 PosRad Cart2Rad(PosCart in)
 {
     PosRad out;
-    double x = (double) in.x;
-    double y = (double) in.y;
+    double x = in.x;
+    double y = in.y;
     double r = sqrt(x*x+y*y);
-    double t = atan(y/x);
+    double t = atan2(y, x);
     out.t = t;
     out.r = r;
     return out;
@@ -23,12 +23,12 @@ PosRad Cart2Rad(PosCart in)
 PosCart Rad2Cart(PosRad in)
 {
     PosCart out;
-    double r = (double) in.r;
-    double t = (double) in.t;
+    double r = in.r;
+    double t = in.t;
     double x = r*cos(t);
     double y = r*sin(t);
-    out.x = (int) x;
-    out.y = (int) y;
+    out.x =  x;
+    out.y = y;
     return out;
 }
 
@@ -43,29 +43,32 @@ double rDistortion(double r, LCParam p)
 
 Mat correctedImage(Mat in, LCParam p)
 {
-    int sizex = in.size().width, sizey = in.size().height;
-    double rMax = sqrt((double) sizex * (double) sizex + (double) sizey * (double) sizey)/2.0;
+    double sizex = (double) in.size().width, sizey = (double) in.size().height;
+    double rMax = sqrt(sizex * sizex + sizey * sizey)/2.0;
     Mat out(in.size(), CV_8UC3, Scalar(0,0,0));
-    for(int y = 0; y < sizey; y++)
+    for(double y = 0; y < sizey; y++)
     {
-        for(int x = 0; x < sizex; x++)
+        for(double x = 0; x < sizex; x++)
         {
-            PosCart srcCoord = {x,y};
-            PosRad radCoord = Cart2Rad(srcCoord);
+            PosCart srcCoord = {x-sizex/2.0,y-sizey/2.0};
+            PosRad radCoord = Cart2Rad(srcCoord); 
+            radCoord.r = rDistortion(radCoord.r/rMax, p)*rMax;
             PosCart dstCoord = Rad2Cart(radCoord);
-            //cout << dstCoord.y+sizey/2 << "," << dstCoord.x+sizex/2 << endl;
-            int dstX = dstCoord.x;
-            int dstY = dstCoord.y;
-            if(dstX < 0 || dstX >= sizex || dstY < 0 || dstY >= sizey)
-            {
-                cout << dstX << "," << dstY << endl;
-                break;
-            }
-            if(dstX != x || dstY != y)
+            double dstX = dstCoord.x+sizex/2.0;
+            double dstY = dstCoord.y+sizey/2.0;
+            if(isnan(dstX) || isnan(dstY))
             {
                 cout << x << "->" << dstX << " \t" << y << "->" << dstY << endl;
+                dstX = x;
+                dstY = y;
             }
-            out.at<Vec3b>(dstY,dstX) = in.at<Vec3b>(y,x);
+            if(round(dstX) < 0 || round(dstX) >= sizex || round(dstY) < 0 || round(dstY) >= sizey)
+            {
+                cout << dstX << ";" << dstY << endl;
+
+                continue;
+            }
+            out.at<Vec3b>(round(y), round(x)) = in.at<Vec3b>(round(dstY), round(dstX));
         }
     }
     return out;

@@ -11,7 +11,7 @@ using namespace cv;
 
 int main(int argc, char const *argv[])
 {
-    String imageName("../pictures/bumblebee.jpg"); // by default
+    String imageName("../pictures/checkerboard.jpg"); // by default
     Mat image;
     image = imread( imageName, IMREAD_COLOR ); // Read the file
     if( image.empty() )                      // Check for invalid input
@@ -22,7 +22,7 @@ int main(int argc, char const *argv[])
 
     cout << image.size() << endl;
 
-    LCParam param = {0.0, 0.0, 0.0};
+    LCParam param = {0.05, 0.0, 0.0};
     Mat newImg = correctedImage(image, param);
 
     namedWindow( "Display window", WINDOW_AUTOSIZE ); // Create a window for display.
