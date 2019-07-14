@@ -58,14 +58,13 @@ Mat correctedImage(Mat in, LCParam p)
             double dstY = dstCoord.y+sizey/2.0;
             if(isnan(dstX) || isnan(dstY))
             {
-                cout << x << "->" << dstX << " \t" << y << "->" << dstY << endl;
+                // cout << x << "->" << dstX << " \t" << y << "->" << dstY << endl;
                 dstX = x;
                 dstY = y;
             }
             if(round(dstX) < 0 || round(dstX) >= sizex || round(dstY) < 0 || round(dstY) >= sizey)
             {
-                cout << dstX << ";" << dstY << endl;
-
+                // cout << dstX << ";" << dstY << endl;
                 continue;
             }
             out.at<Vec3b>(round(y), round(x)) = in.at<Vec3b>(round(dstY), round(dstX));

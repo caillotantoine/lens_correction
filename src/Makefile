@@ -3,8 +3,8 @@ CFLAGS=$(shell pkg-config --cflags --libs opencv)
 
 all: lense_correction
 
-lense_correction: main.cpp correcter.cpp
-	$(CC) -o lense_correction main.cpp correcter.cpp -std=c++11 $(CFLAGS)
+lense_correction: main.cpp correcter.cpp gui.cpp
+	$(CC) -o lense_correction main.cpp correcter.cpp gui.cpp -std=c++11 $(CFLAGS)
 
 run: lense_correction
 	./lense_correction
